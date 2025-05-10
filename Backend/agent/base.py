@@ -114,18 +114,304 @@ class CampusCopilot:
     
     def _find_food(self, query: str) -> str:
         """Find food places near campus."""
-        # TODO: Implement Google Places API integration
-        return "I'll help you find food places. This feature is coming soon!"
+        # Hardcoded food places database
+        food_places = {
+            "LIET Noida": {
+                "Cafeteria": [
+                    "LIET College Canteen - Affordable meals, snacks, and beverages",
+                    "Student Mess - Daily thali and regular meals"
+                ],
+                "Nearby Restaurants": [
+                    "Food Court at GIP Mall (2 km) - Multiple food options",
+                    "Haldiram's (1.5 km) - North Indian, snacks",
+                    "Pizza Hut (2 km) - Fast food, pizza",
+                    "Subway (2 km) - Sandwiches, healthy options",
+                    "Bikanerwala (1.5 km) - Indian snacks, sweets"
+                ],
+                "Budget Options": [
+                    "Local Dhabas (500m) - Authentic North Indian food",
+                    "Street Food Stalls - Chaat, momos, rolls",
+                    "College Canteen - Economical meals"
+                ]
+            },
+            "Lloyd Institute Noida": {
+                "Cafeteria": [
+                    "Lloyd Institute Canteen - Regular meals and snacks",
+                    "Student Mess - Daily thali and breakfast"
+                ],
+                "Nearby Restaurants": [
+                    "Dominos (1 km) - Pizza delivery",
+                    "McDonald's (1.5 km) - Fast food",
+                    "Haldiram's (2 km) - North Indian, snacks",
+                    "Bikanerwala (2 km) - Indian snacks, sweets"
+                ],
+                "Budget Options": [
+                    "Local Food Stalls - Street food, chaat",
+                    "College Canteen - Affordable meals",
+                    "Nearby Dhabas - North Indian cuisine"
+                ]
+            }
+        }
+        
+        # Process the query to determine which campus
+        query = query.lower()
+        if "liet" in query:
+            campus = "LIET Noida"
+        elif "lloyd" in query:
+            campus = "Lloyd Institute Noida"
+        else:
+            # Default to both campuses if not specified
+            response = "Here are food options near both campuses:\n\n"
+            for campus_name, categories in food_places.items():
+                response += f"=== {campus_name} ===\n"
+                for category, places in categories.items():
+                    response += f"\n{category}:\n"
+                    for place in places:
+                        response += f"- {place}\n"
+                response += "\n"
+            return response
+        
+        # Generate response for specific campus
+        response = f"Here are food options near {campus}:\n\n"
+        for category, places in food_places[campus].items():
+            response += f"{category}:\n"
+            for place in places:
+                response += f"- {place}\n"
+            response += "\n"
+        
+        return response
     
     def _check_deadlines(self, query: str) -> str:
         """Check deadlines and schedules."""
-        # TODO: Implement calendar integration
-        return "I'll check your deadlines. This feature is coming soon!"
+        # Hardcoded academic calendar and deadlines
+        academic_calendar = {
+            "Semester Schedule": {
+                "Mid-Semester Exams": "October 15-20, 2024",
+                "End-Semester Exams": "December 10-20, 2024",
+                "Semester Break": "December 21, 2024 - January 5, 2025"
+            },
+            "Assignment Deadlines": {
+                "Project Submissions": {
+                    "Database Project": "November 10, 2024",
+                    "Web Development": "November 15, 2024",
+                    "AI/ML Project": "November 20, 2024"
+                },
+                "Regular Assignments": {
+                    "Data Structures": "Weekly submissions",
+                    "Operating Systems": "Bi-weekly submissions",
+                    "Computer Networks": "Weekly submissions"
+                }
+            },
+            "Important Dates": {
+                "Registration Deadline": "September 30, 2024",
+                "Scholarship Applications": "October 5, 2024",
+                "Placement Drive": "November 1-5, 2024",
+                "Hackathon": "November 15-16, 2024"
+            },
+            "Holidays": {
+                "Diwali Break": "November 1-3, 2024",
+                "Christmas": "December 25, 2024",
+                "New Year": "January 1, 2025"
+            }
+        }
+        
+        # Process the query to determine what information to return
+        query = query.lower()
+        response = "Here are the relevant deadlines and schedules:\n\n"
+        
+        if "exam" in query or "test" in query:
+            response += "=== Exam Schedule ===\n"
+            for exam, date in academic_calendar["Semester Schedule"].items():
+                if "exam" in exam.lower():
+                    response += f"- {exam}: {date}\n"
+            response += "\n"
+            
+        if "project" in query or "assignment" in query:
+            response += "=== Assignment Deadlines ===\n"
+            for category, items in academic_calendar["Assignment Deadlines"].items():
+                response += f"\n{category}:\n"
+                for item, deadline in items.items():
+                    response += f"- {item}: {deadline}\n"
+            response += "\n"
+            
+        if "holiday" in query or "break" in query:
+            response += "=== Holidays and Breaks ===\n"
+            for holiday, date in academic_calendar["Holidays"].items():
+                response += f"- {holiday}: {date}\n"
+            response += "\n"
+            
+        if "important" in query or "date" in query:
+            response += "=== Important Dates ===\n"
+            for event, date in academic_calendar["Important Dates"].items():
+                response += f"- {event}: {date}\n"
+            response += "\n"
+            
+        # If no specific category was requested, show all deadlines
+        if not any(keyword in query for keyword in ["exam", "test", "project", "assignment", "holiday", "break", "important", "date"]):
+            for category, items in academic_calendar.items():
+                response += f"=== {category} ===\n"
+                if isinstance(items, dict):
+                    for item, date in items.items():
+                        if isinstance(date, dict):
+                            response += f"\n{item}:\n"
+                            for subitem, subdate in date.items():
+                                response += f"- {subitem}: {subdate}\n"
+                        else:
+                            response += f"- {item}: {date}\n"
+                response += "\n"
+        
+        # Add a reminder about upcoming deadlines
+        response += "\nReminder: Please check your college portal regularly for any updates or changes to these schedules."
+        
+        return response
     
     def _get_campus_info(self, query: str) -> str:
         """Get campus information."""
-        # TODO: Implement campus database integration
-        return "I'll get that campus information for you. This feature is coming soon!"
+        # Hardcoded campus information database
+        campus_info = {
+            "General Information": {
+                "Name": "Pranveer Singh Institute of Technology (PSIT)",
+                "Location": "Bhatni, Kanpur-Dehat, Uttar Pradesh",
+                "Established": "2004",
+                "Campus Size": "100+ acres",
+                "Accreditation": "NAAC A++ Accredited, NBA Accredited Programs"
+            },
+            "Academic Departments": {
+                "Engineering": [
+                    "Computer Science & Engineering",
+                    "Information Technology",
+                    "Electronics & Communication",
+                    "Electrical Engineering",
+                    "Mechanical Engineering",
+                    "Civil Engineering"
+                ],
+                "Management": [
+                    "MBA",
+                    "BBA"
+                ],
+                "Pharmacy": [
+                    "B.Pharma",
+                    "M.Pharma"
+                ]
+            },
+            "Campus Facilities": {
+                "Academic": [
+                    "Smart Classrooms with Projectors",
+                    "Advanced Computer Labs",
+                    "Research Centers",
+                    "Central Library with Digital Resources",
+                    "Conference Halls"
+                ],
+                "Sports": [
+                    "Cricket Ground",
+                    "Football Field",
+                    "Basketball Court",
+                    "Tennis Court",
+                    "Indoor Sports Complex",
+                    "Swimming Pool"
+                ],
+                "Technical": [
+                    "Robotics Lab",
+                    "IoT Lab",
+                    "AI/ML Lab",
+                    "Cloud Computing Lab",
+                    "Networking Lab"
+                ],
+                "Other Facilities": [
+                    "Auditorium",
+                    "Medical Center",
+                    "Bank & ATM",
+                    "Cafeteria",
+                    "Hostel Accommodation",
+                    "Transportation Services"
+                ]
+            },
+            "Placement & Training": {
+                "Training": [
+                    "Industry-Oriented Training Programs",
+                    "Soft Skills Development",
+                    "Technical Workshops",
+                    "Internship Opportunities"
+                ],
+                "Placement Support": [
+                    "Dedicated Placement Cell",
+                    "Career Counseling",
+                    "Resume Building Workshops",
+                    "Mock Interviews"
+                ]
+            },
+            "Student Life": {
+                "Clubs": [
+                    "Technical Clubs",
+                    "Cultural Clubs",
+                    "Sports Clubs",
+                    "Literary Society",
+                    "Entrepreneurship Cell"
+                ],
+                "Events": [
+                    "Annual Technical Fest",
+                    "Cultural Fest",
+                    "Sports Meet",
+                    "Hackathons",
+                    "Workshops and Seminars"
+                ]
+            }
+        }
+        
+        # Process the query to determine what information to return
+        query = query.lower()
+        response = "Here's the information about PSIT Kanpur:\n\n"
+        
+        if "department" in query or "course" in query or "program" in query:
+            response += "=== Academic Departments ===\n"
+            for dept_type, departments in campus_info["Academic Departments"].items():
+                response += f"\n{dept_type}:\n"
+                for dept in departments:
+                    response += f"- {dept}\n"
+            response += "\n"
+            
+        if "facility" in query or "infrastructure" in query or "lab" in query:
+            response += "=== Campus Facilities ===\n"
+            for category, facilities in campus_info["Campus Facilities"].items():
+                response += f"\n{category}:\n"
+                for facility in facilities:
+                    response += f"- {facility}\n"
+            response += "\n"
+            
+        if "placement" in query or "training" in query or "career" in query:
+            response += "=== Placement & Training ===\n"
+            for category, items in campus_info["Placement & Training"].items():
+                response += f"\n{category}:\n"
+                for item in items:
+                    response += f"- {item}\n"
+            response += "\n"
+            
+        if "student" in query or "club" in query or "event" in query:
+            response += "=== Student Life ===\n"
+            for category, items in campus_info["Student Life"].items():
+                response += f"\n{category}:\n"
+                for item in items:
+                    response += f"- {item}\n"
+            response += "\n"
+            
+        # If no specific category was requested, show all information
+        if not any(keyword in query for keyword in ["department", "course", "program", "facility", "infrastructure", "lab", "placement", "training", "career", "student", "club", "event"]):
+            for category, items in campus_info.items():
+                response += f"=== {category} ===\n"
+                if isinstance(items, dict):
+                    for subcategory, subitems in items.items():
+                        response += f"\n{subcategory}:\n"
+                        if isinstance(subitems, list):
+                            for item in subitems:
+                                response += f"- {item}\n"
+                        else:
+                            response += f"- {subitems}\n"
+                response += "\n"
+        
+        # Add contact information
+        response += "\nFor more information, visit the official website or contact the admission office."
+        
+        return response
     
     def _document_assistance(self, query: str) -> str:
         """Help with document-related queries."""
